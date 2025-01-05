@@ -1,0 +1,205 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { Delete, Edit } from "@mui/icons-material";
+import { usePetitionStore } from "../store";
+import {
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardMedia,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
+    TextField,
+    Typography
+} from "@mui/material";
+import CSS from 'csstype';
+
+interface IPetitionProps {
+    petition: Petition;
+}
+
+const PetitionListObject = (props: IPetitionProps) => {
+    const [petition] = useState<Petition>(props.petition);
+    const [title, setTitle] = useState("");
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const deletePetitionFromStore = usePetitionStore(state => state.removePetition);
+    const editPetitionFromStore = usePetitionStore(state => state.editPetition);
+
+    const handleDeleteDialogClose = () => {
+        setOpenDeleteDialog(false);
+    };
+
+    const handleEditDialogClose = () => {
+        setOpenEditDialog(false);
+    };
+
+    const deleteUser = () => {
+        axios.delete('http://localhost:3000/api/users/' + petition.id)
+            .then(() => {
+                deletePetitionFromStore(petition);
+            });
+    };
+
+    const editUser = () => {
+        axios.put('http://localhost:3000/api/users/' + petition.id, { "title": title })
+            .then(() => {
+                editPetitionFromStore(petition, title);
+            });
+    };
+
+    const userCardStyles: CSS.Properties = {
+        display: "inline-block",
+        height: "328px",
+        width: "300px",
+        margin: "10px",
+        padding: "0px"
+    };
+
+    return (
+        <Card sx={userCardStyles}>
+            <CardMedia
+                component="img"
+                height="200"
+                width="200"
+                sx={{ objectFit: "cover" }}
+                image="https://png.pngitem.com/pimgs/s/150-1503945_transparent-user-png-default-user-image-png-png.png"
+                alt="Auction hero"
+            />
+            <CardContent>
+                <Typography variant="h4">
+                    {petition.id} {petition.title}
+                </Typography>
+            </CardContent>
+            <CardActions>
+                <IconButton onClick={() => { setOpenEditDialog(true) }}>
+                    <Edit />
+                </IconButton>
+                <IconButton onClick={() => { setOpenDeleteDialog(true) }}>
+                    <Delete />
+                </IconButton>
+            </CardActions>
+            <Dialog open={openEditDialog} onClose={handleEditDialogClose}>
+                <DialogTitle>Edit User</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Enter new username:</DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="title"
+                        label="Title"
+                        type="text"
+                        fullWidth
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleEditDialogClose}>Cancel</Button>
+                    <Button onClick={editUser}>Save</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openDeleteDialog} onClose={handleDeleteDialogClose}>
+                <DialogTitle>Delete User</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Are you sure you want to delete this user?</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteDialogClose}>Cancel</Button>
+                    <Button onClick={deleteUser} color="error">Delete</Button>
+                </DialogActions>
+            </Dialog>
+        </Card>
+    );
+};
+
+export default PetitionListObject;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import axios from 'axios';
+import React from "react";
+import CSS from 'csstype';
+import { Paper, AlertTitle, Alert } from "@mui/material";
+import PetitionListObject from "./PetitionListObject";
+import {usePetitionStore} from "../store";
+
+
+const PetitionList = () => {
+    const petitions = usePetitionStore(state => state.petitions)
+    const setPetitions = usePetitionStore(state => state.setPetitions)
+    const [errorFlag, setErrorFlag] = React.useState(false)
+    const [errorMessage, setErrorMessage] = React.useState("")
+
+
+    React.useEffect(() => {
+        const getPetitions = () => {
+            axios.get('http://localhost:4941/api/v1/petitions')
+                .then((response) => {
+                    setErrorFlag(false)
+                    setErrorMessage("")
+                    setPetitions(response.data)
+                    console.log(response.data)
+                }, (error) => {
+                    setErrorFlag(true)
+                    setErrorMessage(error.toString() + " defaulting to old petitions changes app may not work as expected"
+                    )
+                })
+        }
+        getPetitions()
+    },[setPetitions])
+
+    // maybe wrong
+    const petitions_rows = () => petitions.map((petition: Petition) => <PetitionListObject key={ petition.id + petition.title } petition={petition} />)
+    const card: CSS.Properties = { padding: "10px",
+        margin: "20px",
+        display: "block",
+        width: "fit-content"
+    }
+    return (
+        <Paper elevation={3} style={card} >
+            <h1>PetitionList </h1>
+            <div style={{ display: "inline-block", maxWidth: "1965px", minWidth: "320" }}> {errorFlag?
+                <Alert severity = "error"> <AlertTitle> Error </AlertTitle> { errorMessage }
+                </Alert>: ""} { petitions_rows() }
+            </div> </Paper>)}
+export default PetitionList;
