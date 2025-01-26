@@ -1,5 +1,8 @@
 # Petition Masters Website
 
+<img width="1022" alt="petitionMasters" src="https://github.com/user-attachments/assets/855429c6-133b-43ff-85ec-c090e18b094f" />
+
+
 ## Summary
 Petition Masters is a full-stack web application I developed using ExpressJS for the backend API and React for the frontend UI. To easily view the API endpoints, copy and paste the `/express-back-end/api_spec.yaml` file into [Swagger Editor](https://editor.swagger.io/).
 
