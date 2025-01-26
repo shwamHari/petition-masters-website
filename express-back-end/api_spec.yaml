@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: "SENG365 2024: Petitions API"
   version: 0.0.1
-  description: "This specification documents the petitions API to be implemented for Assignment 1. This API provides all of the server-side functionality necessary in order to implement all the user stories for Assignment 2"
+  description: "This specification documents the petitions API."
 servers:
   - url: https://seng365.csse.canterbury.ac.nz/api/v1
     description: "Reference server"
@@ -10,7 +10,7 @@ servers:
     description: "Your development server"
 tags:
   - name: backdoor
-    description: "Development-only endpoints for resetting the database or querying it directly.<br>**These endpoints have been implemented for you, any changes to their functionality may cause tests to break**."
+    description: "Development-only endpoints for resetting the database or querying it directly.<br>."
   - name: users
     description: "Endpoints for registering, logging in, modifying, and retrieving user information"
   - name: users.images
@@ -333,7 +333,7 @@ paths:
       tags:
         - petitions
       summary: "Add a new petition"
-      description: "Create a new petition.<ul><li> The `categoryId` **must reference an existing category**, if it does not it must return a 400.</li><li>A Petition **must have between 1 and 3** `supportTiers` (inclusive), if it does not it must return a 400.</li><li>The `title` **must be unique**, otherwise it must return a 403.</li><li>Each `supportTier.title` **must be unique within those for the petition**, otherwise it must return a 400.</li></ul>" 
+      description: "Create a new petition.<ul><li> The `categoryId` **must reference an existing category**, if it does not it must return a 400.</li><li>A Petition **must have between 1 and 3** `supportTiers` (inclusive), if it does not it must return a 400.</li><li>The `title` **must be unique**, otherwise it must return a 403.</li><li>Each `supportTier.title` **must be unique within those for the petition**, otherwise it must return a 400.</li></ul>"
       security:
         - UserToken: []
       requestBody:
@@ -888,7 +888,7 @@ components:
           type: integer
           minimum: 0
           example: 0
-          nullable: false        
+          nullable: false
     Petition:
       title: Petition
       type: object
